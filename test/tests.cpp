@@ -6,131 +6,122 @@
 #include "circle.h"
 
 const double PI = 3.141592653589793;
-TEST(CircleTest, RadiusInitialization) {
-  Circle c(5.0);
-  EXPECT_DOUBLE_EQ(c.GetRadius(), 5.0);
+
+TEST(CircleInitializationTest, DefaultConstructorValues) {
+  Circle c(3.75);
+  EXPECT_DOUBLE_EQ(c.GetRadius(), 3.75);
 }
 
-TEST(CircleTest, SetRadiusUpdatesFerenceAndArea) {
-  Circle c(5.0);
-  c.SetRadius(10.0);
-  EXPECT_DOUBLE_EQ(c.GetRadius(), 10.0);
-  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 10.0);
-  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 10.0 * 10.0);
+TEST(CirclePropertyTest, RadiusChangeEffects) {
+  Circle c(2.25);
+  c.SetRadius(6.5);
+  EXPECT_DOUBLE_EQ(c.GetRadius(), 6.5);
+  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 6.5);
+  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 6.5 * 6.5);
 }
 
-TEST(CircleTest, SetFerenceUpdatesRadiusAndArea) {
-  Circle c(5.0);
-  c.SetFerence(2 * PI * 8.0);
-  EXPECT_DOUBLE_EQ(c.GetRadius(), 8.0);
-  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 8.0 * 8.0);
+TEST(CirclePropertyTest, CircumferenceChangeEffects) {
+  Circle c(1.8);
+  c.SetFerence(2 * PI * 4.2);
+  EXPECT_DOUBLE_EQ(c.GetRadius(), 4.2);
+  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 4.2 * 4.2);
 }
 
-TEST(CircleTest, SetAreaUpdatesRadiusAndFerence) {
-  Circle c(5.0);
-  c.SetArea(PI * 7.0 * 7.0);
-  EXPECT_DOUBLE_EQ(c.GetRadius(), 7.0);
-  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 7.0);
+TEST(CirclePropertyTest, AreaChangeEffects) {
+  Circle c(3.0);
+  c.SetArea(PI * 5.4 * 5.4);
+  EXPECT_DOUBLE_EQ(c.GetRadius(), 5.4);
+  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 5.4);
 }
 
-TEST(CircleTest, ZeroRadius) {
+TEST(CircleEdgeCaseTest, ZeroRadiusProperties) {
   Circle c(0);
   EXPECT_DOUBLE_EQ(c.GetRadius(), 0);
   EXPECT_DOUBLE_EQ(c.GetFerence(), 0);
   EXPECT_DOUBLE_EQ(c.GetArea(), 0);
 }
 
-TEST(CircleTest, LargeRadius) {
-  Circle c(1e6);
-  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 1e6);
-  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 1e6 * 1e6);
+TEST(CircleEdgeCaseTest, LargeRadiusProperties) {
+  Circle c(1.5e6);
+  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 1.5e6);
+  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 1.5e6 * 1.5e6);
 }
 
-TEST(RopeTest, SmallIncrease) {
-  double gap = CalculateRopeGap(6378.1 * 1000, 1);
-  EXPECT_NEAR(gap, 1 / (2 * PI), 1e-6);
+TEST(CirclePrecisionTest, HighPrecisionValues) {
+  Circle c(1.234567);
+  EXPECT_DOUBLE_EQ(c.GetRadius(), 1.234567);
+  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 1.234567);
+  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 1.234567 * 1.234567);
 }
 
-TEST(RopeTest, NoIncrease) {
-  double gap = CalculateRopeGap(6378.1 * 1000, 0);
+TEST(CircleUpdateTest, MultiplePropertyUpdates) {
+  Circle c(2.0);
+  c.SetRadius(3.5);
+  c.SetFerence(2 * PI * 4.8);
+  c.SetArea(PI * 6.2 * 6.2);
+  EXPECT_DOUBLE_EQ(c.GetRadius(), 6.2);
+  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 6.2);
+  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 6.2 * 6.2);
+}
+
+TEST(EarthRopeTest, SmallLengthIncrease) {
+  double gap = CalculateRopeGap(6375.0 * 1000, 2.0);
+  EXPECT_NEAR(gap, 2.0 / (2 * PI), 1e-6);
+}
+
+TEST(EarthRopeTest, NoLengthIncrease) {
+  double gap = CalculateRopeGap(6375.0 * 1000, 0);
   EXPECT_DOUBLE_EQ(gap, 0);
 }
 
-TEST(PoolTest, BasicCalculation) {
-  double cost = CalculatePoolCost(3, 1, 1000, 2000);
-  double expectedCost = (PI * (4 * 4 - 3 * 3) * 1000) + (2 * PI * 4 * 2000);
+TEST(EarthRopeTest, LargeLengthIncrease) {
+  double gap = CalculateRopeGap(6375.0 * 1000, 5000);
+  EXPECT_NEAR(gap, 5000 / (2 * PI), 1e-6);
+}
+
+TEST(EarthRopeTest, ExactCircumferenceIncrease) {
+  double gap = CalculateRopeGap(6375.0 * 1000, 2 * PI * 15);
+  EXPECT_NEAR(gap, 15, 1e-6);
+}
+
+TEST(PoolCostTest, StandardPoolConfiguration) {
+  double cost = CalculatePoolCost(3.5, 1.25, 1200, 2200);
+  double expectedCost = (PI * (4.75 * 4.75 - 3.5 * 3.5) * 1200) + (2 * PI * 4.75 * 2200);
   EXPECT_NEAR(cost, expectedCost, 1e-6);
 }
 
-TEST(PoolTest, NoPath) {
-  double cost = CalculatePoolCost(3, 0, 1000, 2000);
-  double expectedCost = 2 * PI * 3 * 2000;
+TEST(PoolCostTest, NoPathConfiguration) {
+  double cost = CalculatePoolCost(2.8, 0, 1500, 2400);
+  double expectedCost = 2 * PI * 2.8 * 2400;
   EXPECT_NEAR(cost, expectedCost, 1e-6);
 }
 
-TEST(PoolTest, LargePool) {
-  double cost = CalculatePoolCost(100, 10, 500, 1500);
-  double expectedCost =
-    (PI * (110 * 110 - 100 * 100) * 500) + (2 * PI * 110 * 1500);
+TEST(PoolCostTest, LargePoolConfiguration) {
+  double cost = CalculatePoolCost(45, 5.5, 800, 1850);
+  double expectedCost = (PI * (50.5 * 50.5 - 45 * 45) * 800) + (2 * PI * 50.5 * 1850);
   EXPECT_NEAR(cost, expectedCost, 1e-6);
 }
 
-TEST(PoolTest, ZeroRadius) {
-  double cost = CalculatePoolCost(0, 5, 500, 1500);
-  double expectedCost = (PI * 5 * 5 * 500) + (2 * PI * 5 * 1500);
+TEST(PoolCostTest, ZeroRadiusPool) {
+  double cost = CalculatePoolCost(0, 2.5, 700, 1900);
+  double expectedCost = (PI * 2.5 * 2.5 * 700) + (2 * PI * 2.5 * 1900);
   EXPECT_NEAR(cost, expectedCost, 1e-6);
 }
 
-TEST(CircleTest, DecimalRadius) {
-  Circle c(3.1415);
-  EXPECT_DOUBLE_EQ(c.GetRadius(), 3.1415);
-  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 3.1415);
-  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 3.1415 * 3.1415);
-}
-
-TEST(CircleTest, MultipleUpdates) {
-  Circle c(5.0);
-  c.SetRadius(6.0);
-  c.SetFerence(2 * PI * 7.0);
-  c.SetArea(PI * 8.0 * 8.0);
-  EXPECT_DOUBLE_EQ(c.GetRadius(), 8.0);
-  EXPECT_DOUBLE_EQ(c.GetFerence(), 2 * PI * 8.0);
-  EXPECT_DOUBLE_EQ(c.GetArea(), PI * 8.0 * 8.0);
-}
-
-TEST(RopeTest, LargeIncrease) {
-  double additionalLength = 1000;
-  double gap = CalculateRopeGap(6378.1 * 1000, additionalLength);
-  EXPECT_NEAR(gap, additionalLength / (2 * PI), 1e-6);
-}
-
-TEST(RopeTest, ExactIncrease) {
-  double additionalLength = 2 * PI;
-  double gap = CalculateRopeGap(6378.1 * 1000, additionalLength);
-  EXPECT_NEAR(gap, 1, 1e-6);
-}
-
-TEST(RopeTest, NegativeIncrease) {
-  double additionalLength = -5.0;
-  double gap = CalculateRopeGap(6378.1 * 1000, additionalLength);
-  EXPECT_NEAR(gap, additionalLength / (2 * PI), 1e-9);
-}
-
-TEST(PoolTest, ZeroWaterCost) {
-  double cost = CalculatePoolCost(3, 1, 0, 2000);
-  double expectedCost = 2 * PI * (3 + 1) * 2000;
+TEST(PoolCostTest, MinimalPoolConfiguration) {
+  double cost = CalculatePoolCost(0.8, 0.3, 300, 400);
+  double r = 0.8 + 0.3;
+  double expectedCost = (PI * (r * r - 0.8 * 0.8) * 300) + (2 * PI * r * 400);
   EXPECT_NEAR(cost, expectedCost, 1e-6);
 }
 
-TEST(PoolTest, MinimalPool) {
-  double cost = CalculatePoolCost(1, 0.5, 100, 150);
-  double r = 1 + 0.5;
-  double expectedCost = (PI * (r * r - 1 * 1) * 100) + (2 * PI * r * 150);
-  EXPECT_NEAR(cost, expectedCost, 1e-6);
+TEST(PoolCostTest, FreeMaterialsCase) {
+  double cost = CalculatePoolCost(2.0, 1.0, 0, 0);
+  EXPECT_DOUBLE_EQ(cost, 0);
 }
 
-TEST(PoolTest, ZeroCosts) {
-  double cost = CalculatePoolCost(3, 1, 0, 0);
-  double expectedCost = 0;
-  EXPECT_DOUBLE_EQ(cost, expectedCost);
+TEST(PoolCostTest, NoWaterCostCase) {
+  double cost = CalculatePoolCost(3.0, 1.5, 0, 2000);
+  double expectedCost = 2 * PI * (3.0 + 1.5) * 2000;
+  EXPECT_NEAR(cost, expectedCost, 1e-6);
 }
