@@ -86,7 +86,7 @@ TEST(EarthRopeTest, ExactCircumferenceIncrease) {
 
 TEST(PoolCostTest, StandardPoolConfiguration) {
   double cost = CalculatePoolCost(3.5, 1.25, 12, 22);
-  double e = (PI * (4.7 * 4.7 - 3.5 * 3.5) * 12) + (2 * PI * 4.7 * 22);
+  double e = (PI * (4.75 * 4.75 - 3.5 * 3.5) * 12) + (2 * PI * 4.75 * 22);
   EXPECT_NEAR(cost, e, 1e-6);
 }
 
