@@ -85,9 +85,9 @@ TEST(EarthRopeTest, ExactCircumferenceIncrease) {
 }
 
 TEST(PoolCostTest, StandardPoolConfiguration) {
-  double cost = CalculatePoolCost(3.5, 1.25, 1200, 2200);
-  double expCost = (PI * (4.75 * 4.75 - 3.5 * 3.5) * 1200) + (2 * PI * 4.75 * 2200);
-  EXPECT_NEAR(cost, expCost, 1e-6);
+  double cost = CalculatePoolCost(3.5, 1.25, 12, 22);
+  double e = (PI * (4.7 * 4.7 - 3.5 * 3.5) * 12) + (2 * PI * 4.7 * 22);
+  EXPECT_NEAR(cost, e, 1e-6);
 }
 
 TEST(PoolCostTest, NoPathConfiguration) {
@@ -97,9 +97,9 @@ TEST(PoolCostTest, NoPathConfiguration) {
 }
 
 TEST(PoolCostTest, LargePoolConfiguration) {
-  double cost = CalculatePoolCost(45, 5.5, 800, 1850);
-  double expCost = (PI * (50.5 * 50.5 - 45 * 45) * 800) + (2 * PI * 50.5 * 1850);
-  EXPECT_NEAR(cost, expCost, 1e-6);
+  double cost = CalculatePoolCost(45, 5.5, 8, 18);
+  double e = (PI * (50.5 * 50.5 - 45 * 45) * 8) + (2 * PI * 50.5 * 18);
+  EXPECT_NEAR(cost, e, 1e-6);
 }
 
 TEST(PoolCostTest, ZeroRadiusPool) {
